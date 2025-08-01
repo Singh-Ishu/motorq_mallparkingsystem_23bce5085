@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from .database import create_db_and_tables, engine
+from .database import create_db_and_tables, engine, populate_default_slots
 from .routers import vehicles, slots, dashboard 
 
 # Define lifespan context for database initialization
@@ -17,9 +17,13 @@ async def lifespan(app: FastAPI):
     print("Creating tables...")
     create_db_and_tables()
     print("Tables created!")
+
+    print("Populating default parking slots...") # <--- New log message
+    populate_default_slots() # <--- Called the new function
+    print("Default slots populated!") # <--- New log message
+
     yield
     print("Shutting down...")
-
 
 app = FastAPI(
     title="Mall Parking Management System API",
