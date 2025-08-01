@@ -1,0 +1,12 @@
+.dashboard {
+    display: flex;
+    justify-content: space-between;
+}
+.dashboard-grid-container {
+    min-width: 30%;
+    max-width: 30%;
+}
+.dashboard-remaining {
+    max-width: 65%;
+    min-width: 60%;
+}
