@@ -1,7 +1,12 @@
 import "./FilterParking.css";
 
-function FilterParking() {
-    return <div className="filter-button-container">FILTER</div>;
+function FilterParking({ onClick }) {
+    // Accept the onClick prop
+    return (
+        <div className="filter-button-container" onClick={onClick}>
+            FILTER
+        </div>
+    );
 }
 
 export default FilterParking;

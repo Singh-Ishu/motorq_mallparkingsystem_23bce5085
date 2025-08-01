@@ -1,31 +1,51 @@
 import { useState } from "react";
 import AddCar from "../components/AddCar";
 import AddCarModal from "../components/AddCarModal";
+import FilterParking from "../components/FilterParking"; // Import FilterParking
+import FilterParkingModal from "../components/FilterParkingModal"; // Import FilterParkingModal
 import DashboardData from "../components/DashboardData";
-import FilterParking from "../components/FilterParking";
 import Grid from "../components/Grid";
 import Search from "../components/Search";
-import "./Dashboard.css"; // Ensure this CSS file exists for dashboard layout
+import "./Dashboard.css";
 
 function Dashboard() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAddCarModalOpen, setIsAddCarModalOpen] = useState(false);
+    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [currentFilter, setCurrentFilter] = useState("All"); // State to hold the active filter
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const openAddCarModal = () => setIsAddCarModalOpen(true);
+    const closeAddCarModal = () => setIsAddCarModalOpen(false);
+
+    const openFilterModal = () => setIsFilterModalOpen(true);
+    const closeFilterModal = () => setIsFilterModalOpen(false);
+
+    const handleApplyFilter = (filter) => {
+        setCurrentFilter(filter);
+        // You would typically pass this filter down to the Grid component
+        // For example: <Grid filter={filter} />
+        console.log("Applied filter:", filter);
+    };
 
     return (
         <div className="dashboard">
-            {/* Conditionally render the modal */}
-            {isModalOpen && <AddCarModal onClose={closeModal} />}
+            {isAddCarModalOpen && <AddCarModal onClose={closeAddCarModal} />}
+            {isFilterModalOpen && (
+                <FilterParkingModal
+                    onClose={closeFilterModal}
+                    onApplyFilter={handleApplyFilter}
+                    currentFilter={currentFilter} // Pass current filter to pre-select in modal
+                />
+            )}
 
             <div className="dashboard-grid-container">
-                <Grid />
+                <Grid currentFilter={currentFilter} />{" "}
+                {/* Pass filter to Grid */}
             </div>
             <div className="dashboard-remaining">
                 <div className="top-buttons-dashboard">
-                    <AddCar onClick={openModal} />{" "}
-                    {/* Pass the openModal function */}
-                    <FilterParking />
+                    <AddCar onClick={openAddCarModal} />
+                    <FilterParking onClick={openFilterModal} />{" "}
+                    {/* Pass openFilterModal */}
                     <Search />
                 </div>
                 <DashboardData />
