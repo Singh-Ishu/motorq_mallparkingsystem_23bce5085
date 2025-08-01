@@ -1,20 +1,75 @@
-# API endpoints for vehicle entry and exit
-
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query 
 from sqlmodel import Session, select
 from datetime import datetime, timedelta
 from typing import List, Optional
 
 from ..database import get_session
 from ..models import Vehicle, ParkingSlot, ParkingSession, VehicleType, SlotType, SlotStatus, BillingType, SessionStatus
-from ..schemas import VehicleEntryRequest, VehicleEntryResponse, VehicleExitResponse
+from ..schemas import VehicleEntryRequest, VehicleEntryResponse, VehicleExitResponse, ParkingSlotResponse 
 
 router = APIRouter(prefix="/vehicles", tags=["Vehicles"])
 
 # Define parking rates
-HOURLY_RATE_FIRST_HOUR = 50.0  #50 INR for the first hour
-HOURLY_RATE_SUBSEQUENT = 30.0  #30 INR for subsequent hours
-DAY_PASS_RATE = 200.0          #200 INR for a day pass
+HOURLY_RATE_FIRST_HOUR = 50.0  # Example: 50 INR for the first hour
+HOURLY_RATE_SUBSEQUENT = 30.0 # Example: 30 INR for subsequent hours
+DAY_PASS_RATE = 200.0         # Example: 200 INR for a day pass
+
+# Helper functions for slot assignment (already present)
+def _get_compatible_slot_types(vehicle_type: VehicleType) -> List[SlotType]:
+    """Returns a prioritized list of compatible slot types for a given vehicle type."""
+    if vehicle_type == VehicleType.CAR:
+        return [SlotType.REGULAR, SlotType.COMPACT]
+    elif vehicle_type == VehicleType.BIKE:
+        return [SlotType.BIKE]
+    elif vehicle_type == VehicleType.EV:
+        return [SlotType.EV, SlotType.REGULAR, SlotType.COMPACT] # EV can use regular/compact if EV slot with charger isn't available
+    elif vehicle_type == VehicleType.HANDICAP:
+        return [SlotType.HANDICAP, SlotType.REGULAR, SlotType.COMPACT] # Handicap can use regular/compact if accessible isn't available
+    return []
+
+def _is_slot_compatible(vehicle_type: VehicleType, slot_type: SlotType, has_charger: bool) -> bool:
+    """Checks if a given slot type is compatible with a vehicle type."""
+    if vehicle_type == VehicleType.CAR:
+        return slot_type in [SlotType.REGULAR, SlotType.COMPACT]
+    elif vehicle_type == VehicleType.BIKE:
+        return slot_type == SlotType.BIKE
+    elif vehicle_type == VehicleType.EV:
+        # EV requires EV slot with charger, or can use regular/compact without charger
+        return (slot_type == SlotType.EV and has_charger) or \
+               (slot_type in [SlotType.REGULAR, SlotType.COMPACT] and not has_charger)
+    elif vehicle_type == VehicleType.HANDICAP:
+        return slot_type in [SlotType.HANDICAP, SlotType.REGULAR, SlotType.COMPACT]
+    return False
+
+@router.get("/suggest-slot", response_model=Optional[ParkingSlotResponse]) # <--- NEW ENDPOINT
+async def suggest_parking_slot(
+    vehicle_type: VehicleType = Query(..., description="Type of vehicle to find a slot for."),
+    db: Session = Depends(get_session)
+):
+    """
+    Suggests the nearest available parking slot based on vehicle type without reserving it.
+    Returns None if no suitable slot is found.
+    """
+    compatible_slot_types = _get_compatible_slot_types(vehicle_type)
+    
+    suggested_slot: Optional[ParkingSlot] = None
+
+    # Prioritize specific slot types first
+    for slot_type in compatible_slot_types:
+        query = select(ParkingSlot).where(
+            ParkingSlot.slot_type == slot_type,
+            ParkingSlot.status == SlotStatus.AVAILABLE
+        )
+        # Special handling for EV slots with chargers
+        if vehicle_type == VehicleType.EV:
+            query = query.where(ParkingSlot.has_charger == True)
+
+        suggested_slot = db.exec(query).first() # Simple first available
+        if suggested_slot:
+            break
+    
+    return suggested_slot # Returns None if no slot found, or ParkingSlotResponse if found
+
 
 @router.post("/entry", response_model=VehicleEntryResponse, status_code=status.HTTP_201_CREATED)
 async def vehicle_entry(request: VehicleEntryRequest, db: Session = Depends(get_session)):
@@ -36,6 +91,7 @@ async def vehicle_entry(request: VehicleEntryRequest, db: Session = Depends(get_
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Vehicle with number plate '{request.number_plate}' already has an active session (Session ID: {existing_active_session.id})."
         )
+
     # 2. Find or create Vehicle record
     vehicle = db.exec(select(Vehicle).where(Vehicle.number_plate == request.number_plate)).first()
     if not vehicle:
@@ -67,20 +123,18 @@ async def vehicle_entry(request: VehicleEntryRequest, db: Session = Depends(get_
                 detail=f"Manual slot ID {request.slot_id} is not compatible with vehicle type {request.vehicle_type.value}."
             )
     else:
-        # Auto-assignment
+        # Auto-assignment (reusing the same logic as suggest-slot)
         compatible_slot_types = _get_compatible_slot_types(request.vehicle_type)
         
-        # Prioritize specific slot types first
         for slot_type in compatible_slot_types:
             query = select(ParkingSlot).where(
                 ParkingSlot.slot_type == slot_type,
                 ParkingSlot.status == SlotStatus.AVAILABLE
             )
-            # Special handling for EV slots with chargers
             if request.vehicle_type == VehicleType.EV:
                 query = query.where(ParkingSlot.has_charger == True)
 
-            assigned_slot = db.exec(query).first() # Simple first available
+            assigned_slot = db.exec(query).first()
             if assigned_slot:
                 break
         
@@ -176,30 +230,3 @@ async def vehicle_exit_by_session_id(session_id: int, db: Session = Depends(get_
         message=f"Vehicle '{session_to_exit.vehicle_number_plate}' exited. Total amount: {session_to_exit.billing_amount:.2f} INR.",
         session=session_to_exit
     )
-
-# Helper functions for slot assignment
-def _get_compatible_slot_types(vehicle_type: VehicleType) -> List[SlotType]:
-    """Returns a prioritized list of compatible slot types for a given vehicle type."""
-    if vehicle_type == VehicleType.CAR:
-        return [SlotType.REGULAR, SlotType.COMPACT]
-    elif vehicle_type == VehicleType.BIKE:
-        return [SlotType.BIKE]
-    elif vehicle_type == VehicleType.EV:
-        return [SlotType.EV, SlotType.REGULAR, SlotType.COMPACT] # EV can use regular/compact if EV slot with charger isn't available
-    elif vehicle_type == VehicleType.HANDICAP:
-        return [SlotType.HANDICAP, SlotType.REGULAR, SlotType.COMPACT] # Handicap can use regular/compact if accessible isn't available
-    return []
-
-def _is_slot_compatible(vehicle_type: VehicleType, slot_type: SlotType, has_charger: bool) -> bool:
-    """Checks if a given slot type is compatible with a vehicle type."""
-    if vehicle_type == VehicleType.CAR:
-        return slot_type in [SlotType.REGULAR, SlotType.COMPACT]
-    elif vehicle_type == VehicleType.BIKE:
-        return slot_type == SlotType.BIKE
-    elif vehicle_type == VehicleType.EV:
-        # EV requires EV slot with charger, or can use regular/compact without charger
-        return (slot_type == SlotType.EV and has_charger) or \
-               (slot_type in [SlotType.REGULAR, SlotType.COMPACT] and not has_charger)
-    elif vehicle_type == VehicleType.HANDICAP:
-        return slot_type in [SlotType.HANDICAP, SlotType.REGULAR, SlotType.COMPACT]
-    return False
