@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from sqlmodel import Session, select
+from sqlmodel import Session, select # <--- Removed func
 from typing import List, Optional
 
 from ..database import get_session
@@ -13,10 +13,11 @@ async def get_dashboard_summary(db: Session = Depends(get_session)):
     """
     Returns a summary of parking slot counts (total, available, occupied, maintenance).
     """
-    total_slots = db.exec(select(ParkingSlot)).count()
-    available_slots = db.exec(select(ParkingSlot).where(ParkingSlot.status == SlotStatus.AVAILABLE)).count()
-    occupied_slots = db.exec(select(ParkingSlot).where(ParkingSlot.status == SlotStatus.OCCUPIED)).count()
-    maintenance_slots = db.exec(select(ParkingSlot).where(ParkingSlot.status == SlotStatus.MAINTENANCE)).count()
+    # Corrected way to get counts from SQLModel/SQLAlchemy results
+    total_slots = len(db.exec(select(ParkingSlot)).all())
+    available_slots = len(db.exec(select(ParkingSlot).where(ParkingSlot.status == SlotStatus.AVAILABLE)).all())
+    occupied_slots = len(db.exec(select(ParkingSlot).where(ParkingSlot.status == SlotStatus.OCCUPIED)).all())
+    maintenance_slots = len(db.exec(select(ParkingSlot).where(ParkingSlot.status == SlotStatus.MAINTENANCE)).all())
 
     return DashboardSummaryResponse(
         total_slots=total_slots,
@@ -61,3 +62,4 @@ async def get_all_sessions(
 
     sessions = db.exec(query).all()
     return sessions
+

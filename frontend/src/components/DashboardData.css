@@ -1,11 +1,166 @@
-.dashboard-data-container {
-    display: flex;
-    flex-wrap: wrap;
+/* frontend/src/DashboardData.css */
+
+/* Base container for the dashboard grid */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to 1 column on small screens */
+    gap: 24px; /* Space between grid items */
+    padding: 24px;
+    max-width: 96rem; /* Equivalent to max-w-6xl */
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Inter", sans-serif; /* Assuming Inter font is available */
+    background: linear-gradient(
+        to bottom right,
+        #f8fafc,
+        #e2e8f0
+    ); /* from-gray-50 to-gray-200 */
+    border-radius: 16px; /* rounded-2xl */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl */
 }
 
-.dashboard-data-value-holder {
-    min-width: 40%;
-    /* max-width: 45%; */
-    font-size: 3em;
-    width: max-content;
+/* Responsive grid for larger screens */
+@media (min-width: 640px) {
+    /* Equivalent to sm: */
+    .dashboard-container {
+        grid-template-columns: repeat(
+            2,
+            1fr
+        ); /* 2 columns for small screens and up */
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Equivalent to lg: */
+    .dashboard-container {
+        grid-template-columns: repeat(
+            4,
+            1fr
+        ); /* 4 columns for large screens and up */
+    }
+}
+
+/* Common styling for each dashboard card */
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border-radius: 12px; /* rounded-xl */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-lg */
+    transition: all 0.3s ease-in-out; /* transition-all duration-300 ease-in-out */
+    transform: scale(1); /* Initial scale */
+    text-align: center;
+}
+
+.dashboard-card:hover {
+    transform: scale(1.05); /* hover:scale-105 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -4px rgba(0, 0, 0, 0.1); /* hover:shadow-xl */
+}
+
+/* Card titles */
+.card-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 8px; /* mb-2 */
+}
+
+/* Card values (numbers) */
+.card-value {
+    font-size: 3rem; /* text-5xl */
+    font-weight: 800; /* font-extrabold */
+}
+
+/* Specific card color themes */
+.total-slots-card {
+    background: linear-gradient(
+        to bottom right,
+        #e0f2fe,
+        #bfdbfe
+    ); /* from-blue-100 to-blue-200 */
+    color: #1e40af; /* text-blue-800 */
+}
+
+.available-slots-card {
+    background: linear-gradient(
+        to bottom right,
+        #dcfce7,
+        #bbf7d0
+    ); /* from-green-100 to-green-200 */
+    color: #166534; /* text-green-800 */
+}
+
+.occupied-slots-card {
+    background: linear-gradient(
+        to bottom right,
+        #fee2e2,
+        #fecaca
+    ); /* from-red-100 to-red-200 */
+    color: #991b1b; /* text-red-800 */
+}
+
+.maintenance-slots-card {
+    background: linear-gradient(
+        to bottom right,
+        #fffbe0,
+        #fef08a
+    ); /* from-yellow-100 to-yellow-200 */
+    color: #92400e; /* text-yellow-800 */
+}
+
+/* Loading state styling */
+.dashboard-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: #4b5563; /* text-gray-600 */
+    font-size: 1.125rem; /* text-lg */
+}
+
+.loading-spinner {
+    height: 32px; /* h-8 */
+    width: 32px; /* w-8 */
+    margin-right: 12px; /* mr-3 */
+    color: #3b82f6; /* text-blue-500 */
+    animation: spin 1s linear infinite; /* animate-spin */
+}
+
+.spinner-path-bg {
+    opacity: 0.25;
+}
+
+.spinner-path-fg {
+    opacity: 0.75;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error state styling */
+.dashboard-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: #b91c1c; /* text-red-700 */
+    border: 1px solid #f87171; /* border-red-400 */
+    background-color: #fee2e2; /* bg-red-100 */
+    border-radius: 8px; /* rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+}
+
+.error-message {
+    font-weight: 500; /* font-medium */
 }
