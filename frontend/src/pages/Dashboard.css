@@ -10,3 +10,15 @@
     max-width: 65%;
     min-width: 60%;
 }
+
+.top-buttons-dashboard {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+.top-buttons-dashboard * {
+    display: inline-block;
+}
+.dashboard-data {
+    width: 100%;
+}

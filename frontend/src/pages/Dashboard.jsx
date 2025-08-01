@@ -1,5 +1,8 @@
+import AddCar from "../components/AddCar";
 import DashboardData from "../components/DashboardData";
+import FilterParking from "../components/FilterParking";
 import Grid from "../components/Grid";
+import Search from "../components/Search";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -9,6 +12,11 @@ function Dashboard() {
                 <Grid />
             </div>
             <div className="dashboard-remaining">
+                <div className="top-buttons-dashboard">
+                    <AddCar />
+                    <FilterParking />
+                    <Search />
+                </div>
                 <DashboardData />
             </div>
         </div>
