@@ -1,40 +1,65 @@
+/* --- Navbar.css (Revised) --- */
+
+/* A modern, clean design for the main application header */
+.app-header {
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 64px;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Flexbox layout for alignment */
 .navbar-main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #343a40;
-    padding: 0 2rem;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    max-width: 1200px; /* Optional: constrain width on large screens */
+    margin: 0 auto;
 }
 
-.navbar-title {
-    font-size: 1.5rem;
+/* Styling for the application title/brand */
+.navbar-brand a {
+    font-size: 1.25rem;
     font-weight: 600;
+    color: #1a202c; /* Darker, more professional text color */
+    text-decoration: none;
 }
 
-.navbar-main ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* Container for the navigation links */
+.navbar-links {
     display: flex;
+    gap: 1rem; /* Spacing between links */
 }
 
-.navbar-main li {
-    padding: 1.5rem 1rem;
-    cursor: pointer;
+/* Styling for individual navigation links */
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: 500;
-    border-bottom: 3px solid transparent;
-    transition: background-color 0.2s ease, border-bottom-color 0.2s ease;
+    color: #4a5568; /* Softer text color for non-active links */
+    text-decoration: none;
+    border-radius: 6px;
+    position: relative;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-.navbar-main li:hover {
-    background-color: #495057;
+/* Hover effect for links */
+.nav-link:hover {
+    color: #1a202c;
+    background-color: #f7fafc; /* Subtle background on hover */
 }
 
-/* Style for the currently active navigation link */
-.navbar-main li.active {
-    border-bottom-color: #007bff;
-    color: #fff;
+/* Active link styling provided automatically by NavLink */
+.nav-link.active {
+    color: #2b6cb0; /* A strong blue for the active link */
+    font-weight: 600;
+    background-color: #ebf8ff; /* A light blue background for active state */
 }
