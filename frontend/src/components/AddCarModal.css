@@ -1,0 +1,167 @@
+/* Styles for the modal backdrop */
+.add-car-modal-backdrop {
+    position: fixed; /* Position fixed to cover the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black overlay */
+    display: flex; /* Use flexbox to center the modal content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 1000; /* Ensure the modal is on top of other content */
+    backdrop-filter: blur(
+        3px
+    ); /* Optional: Add a subtle blur effect to the background */
+}
+
+/* Styles for the actual modal content box */
+.modal-content {
+    background-color: #ffffff; /* White background for the modal */
+    padding: 30px;
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    position: relative; /* Needed for positioning the close button */
+    width: 90%; /* Responsive width */
+    max-width: 450px; /* Maximum width for larger screens */
+    animation: fadeInScale 0.3s ease-out forwards; /* Simple animation for appearance */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between elements */
+}
+
+/* Animation for modal appearance */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Close button styling */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #888;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s ease-in-out;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+/* Heading inside the modal */
+.modal-content h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Form input group styling */
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Input and select field styling */
+.modal-content input[type="text"],
+.modal-content select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    color: #333;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content select:focus {
+    border-color: #007bff; /* Highlight on focus */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none; /* Remove default outline */
+}
+
+/* Submit button styling */
+.submit-button {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #007bff; /* Primary blue color */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.submit-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.submit-button:active {
+    transform: translateY(0); /* Reset on click */
+}
+
+/* Basic styling for the AddCar button (if not already styled) */
+.add-car-button-container {
+    padding: 12px 25px;
+    background-color: #28a745; /* Green color */
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    display: inline-flex; /* Allows proper centering of text if needed */
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-car-button-container:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5em;
+    }
+
+    .close-button {
+        font-size: 24px;
+        top: 10px;
+        right: 10px;
+    }
+}

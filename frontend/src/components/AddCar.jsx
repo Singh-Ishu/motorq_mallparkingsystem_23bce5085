@@ -1,7 +1,11 @@
 import "./AddCar.css";
 
-function AddCar() {
-    return <div className="add-car-button-container">ADD</div>;
+function AddCar({ onClick }) {
+    return (
+        <div className="add-car-button-container" onClick={onClick}>
+            ADD
+        </div>
+    );
 }
 
 export default AddCar;
