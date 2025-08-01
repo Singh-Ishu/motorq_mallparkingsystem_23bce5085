@@ -1,0 +1,10 @@
+.grid_dashboard {
+    background-color: antiquewhite;
+    width: 100%;
+    min-height: 80%;
+
+    margin-left: 1em;
+    padding: 1em;
+
+    border-radius: 5px;
+}
