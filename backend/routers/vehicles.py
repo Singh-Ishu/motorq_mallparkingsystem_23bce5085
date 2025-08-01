@@ -14,7 +14,7 @@ HOURLY_RATE_FIRST_HOUR = 50.0  # Example: 50 INR for the first hour
 HOURLY_RATE_SUBSEQUENT = 30.0 # Example: 30 INR for subsequent hours
 DAY_PASS_RATE = 200.0         # Example: 200 INR for a day pass
 
-# Helper functions for slot assignment (already present)
+# Helper functions for slot assignment 
 def _get_compatible_slot_types(vehicle_type: VehicleType) -> List[SlotType]:
     """Returns a prioritized list of compatible slot types for a given vehicle type."""
     if vehicle_type == VehicleType.CAR:
@@ -41,7 +41,7 @@ def _is_slot_compatible(vehicle_type: VehicleType, slot_type: SlotType, has_char
         return slot_type in [SlotType.HANDICAP, SlotType.REGULAR, SlotType.COMPACT]
     return False
 
-@router.get("/suggest-slot", response_model=Optional[ParkingSlotResponse]) # <--- NEW ENDPOINT
+@router.get("/suggest-slot", response_model=Optional[ParkingSlotResponse]) 
 async def suggest_parking_slot(
     vehicle_type: VehicleType = Query(..., description="Type of vehicle to find a slot for."),
     db: Session = Depends(get_session)
