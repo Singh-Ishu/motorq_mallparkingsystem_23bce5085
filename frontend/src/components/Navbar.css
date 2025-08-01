@@ -1,11 +1,68 @@
+/* Styles for the main navigation bar */
 .navbar-main {
-    margin-bottom: 10px;
-    padding-left: 1em;
-    padding-top: 1em;
+    background-color: #343a40; /* Dark background for a sleek look */
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex;
+    justify-content: center; /* Center the navigation items */
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box; /* Include padding in the element's total width */
 }
 
-.navbar-main ul li {
-    display: inline-block;
-    margin-right: 1em;
-    font-size: 1em;
+/* Styles for the unordered list within the navbar */
+.navbar-main ul {
+    list-style: none; /* Remove default bullet points */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Arrange list items horizontally */
+    gap: 30px; /* Space between navigation items */
+}
+
+/* Styles for individual list items (navigation links) */
+.navbar-main li {
+    font-size: 1.1em;
+    color: #f8f9fa; /* Light color for text */
+    cursor: pointer;
+    padding: 8px 15px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.navbar-main li:hover {
+    background-color: #495057; /* Slightly lighter background on hover */
+    color: #ffffff; /* White text on hover */
+}
+
+.navbar-main li:active {
+    background-color: #212529; /* Even darker on click */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .navbar-main {
+        padding: 10px 15px;
+    }
+
+    .navbar-main ul {
+        gap: 20px;
+    }
+
+    .navbar-main li {
+        font-size: 1em;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-main ul {
+        flex-direction: column; /* Stack items vertically on very small screens */
+        gap: 10px;
+        align-items: center;
+    }
+
+    .navbar-main li {
+        width: 100%; /* Make list items take full width when stacked */
+        text-align: center;
+    }
 }
