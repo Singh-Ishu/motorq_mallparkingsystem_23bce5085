@@ -50,4 +50,4 @@ app.include_router(dashboard.router)
 # Root endpoint
 @app.get("/")
 async def read_root():
-    return {"message": "Welcome to the Mall Parking Management System API!"}
+    return {"message": "MEOW MEOW MEOW"}

@@ -4,9 +4,39 @@ from typing import List
 
 from ..database import get_session
 from ..models import ParkingSlot, SlotStatus, ParkingSession, SessionStatus
-from ..schemas import SlotStatusUpdateRequest, ParkingSlotResponse
+from ..schemas import SlotStatusUpdateRequest, ParkingSlotResponse, SlotCreateRequest
 
 router = APIRouter(prefix="/slots", tags=["Parking Slots"])
+
+@router.post("/",response_model=ParkingSlotResponse, status_code=status.HTTP_201_CREATED)
+async def create_parking_slot(
+    request: SlotCreateRequest,
+    db: Session = Depends(get_session)
+):
+    """
+    Creates a new parking slot.
+    """
+    # Check if a slot with the same slot_number already exists
+    existing_slot = db.exec(
+        select(ParkingSlot).where(ParkingSlot.slot_number == request.slot_number)
+    ).first()
+
+    if existing_slot:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Parking slot with number '{request.slot_number}' already exists."
+        )
+
+    new_slot = ParkingSlot(
+        slot_number=request.slot_number,
+        slot_type=request.slot_type,
+        has_charger=request.has_charger,
+        status=SlotStatus.AVAILABLE # New slots are always available by default
+    )
+    db.add(new_slot)
+    db.commit()
+    db.refresh(new_slot)
+    return new_slot
 
 @router.put("/{slot_id}/status", response_model=ParkingSlotResponse)
 async def update_slot_status(

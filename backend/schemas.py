@@ -5,12 +5,19 @@ from .models import VehicleType, SlotType, SlotStatus, BillingType, SessionStatu
 
 # --- Request Schemas ---
 
+
 class VehicleEntryRequest(BaseModel):
     """Schema for vehicle entry request."""
     number_plate: str = Field(..., max_length=20)
     vehicle_type: VehicleType
     billing_type: BillingType
     slot_id: Optional[int] = None
+
+class SlotCreateRequest(BaseModel): # <--- NEW
+    """Schema for creating a new parking slot."""
+    slot_number: str = Field(..., max_length=10)
+    slot_type: SlotType
+    has_charger: bool = False 
 
 class SlotStatusUpdateRequest(BaseModel):
     """Schema for updating a parking slot's status."""

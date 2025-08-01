@@ -43,6 +43,7 @@ class Vehicle(SQLModel, table=True):
     number_plate: str = Field(unique=True, index=True, max_length=20)
     vehicle_type: VehicleType
 
+
 class ParkingSlot(SQLModel, table=True):
     """Represents a parking slot in the mall."""
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -60,4 +61,4 @@ class ParkingSession(SQLModel, table=True):
     exit_time: Optional[datetime] = None
     status: SessionStatus = SessionStatus.ACTIVE
     billing_type: BillingType
-    billing_amount: Optional[float] = None # Calculated on exit for Hourly, fixed on entry for Day Pass
+    billing_amount: Optional[float] = None 
